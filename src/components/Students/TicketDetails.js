@@ -8,8 +8,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-import { TICKET_URL } from '../../config/api'
+import { STUDENTS_URL } from '../../config/api'
 import { I18nTicket, I18nStudents } from '../../i18n/i18n'
+import { studentService } from '../../services/StudentService'
 import StudentLogout from './StudentLogout'
 import Gdpr from '../Ui/Gdpr'
 
@@ -26,75 +27,70 @@ const TableHeader = () => {
 }
 
 class TicketDetails extends Component {
-    constructor(props) {
-      super(props);
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        data: [],
-      };
-      
-    }
+    this.state = {
+      data: [],
+    };
 
-    componentDidMount() {
+  }
 
-        const ticket = JSON.parse(localStorage.getItem('ticket'));
-    
-        fetch(`${TICKET_URL}/${ticket.id}/ticket`, {
-          headers: {
-            "authorization" : `Bearer ${ticket.token}`,
-          }})
-          .then(result => result.json())
-          .then(result => {
-            this.setState({
-              data: result,
-            })
+  componentDidMount() {
+
+    studentService.getDetails(STUDENTS_URL)
+      .then(result => result.json())
+      .then(result => {
+        this.setState({
+          data: result,
         })
-    }
+      })
+  }
 
-    render() {
-        const { data } = this.state
-    
-        return (
-          <Box>
-            <Box my={2}>
-            <Typography
-                variant="h4"
-                component="h3">
-                  {I18nStudents.PageTitle}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography
-                variant="h6"
-                component="h5">
-                  {data.studentName}
-              </Typography>
-            </Box>
-          
-            <Box mt={4} mb={2}>
-              <StudentLogout code={data.code} />
-            </Box>
-            
-            <Box mt={4}>
-                <Paper>
-                  <Table>
-                    <TableHeader />
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>{data.code}</TableCell>
-                        <TableCell>{data.discountType}</TableCell>
-                        <TableCell>{data.createdAt}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </Box>
+  render() {
+    const { data } = this.state
 
-              <Gdpr />
+    return (
+      <Box>
+        <Box my={2}>
+          <Typography
+            variant="h4"
+            component="h3">
+            {I18nStudents.PageTitle}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography
+            variant="h6"
+            component="h5">
+            {data.studentName}
+          </Typography>
+        </Box>
 
-          </Box>
-        );
-    }
+        <Box mt={4} mb={2}>
+          <StudentLogout code={data.code} />
+        </Box>
+
+        <Box mt={4}>
+          <Paper>
+            <Table>
+              <TableHeader />
+              <TableBody>
+                <TableRow>
+                  <TableCell>{data.code}</TableCell>
+                  <TableCell>{data.discountType}</TableCell>
+                  <TableCell>{data.createdAt}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Paper>
+        </Box>
+
+        <Gdpr />
+
+      </Box>
+    );
+  }
 }
 
 export default TicketDetails

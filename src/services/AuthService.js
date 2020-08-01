@@ -8,7 +8,7 @@ export const authService = {
 
 function login(url, data) {
     const requestOptions = {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     };
@@ -40,12 +40,12 @@ function emailRecover(url, data) {
 function recover(url, data) {
     logout();
     const requestOptions = {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     };
 
-    return fetch(url, requestOptions)
+    return fetch(`${url}/reset`, requestOptions)
         .then(handleResponse);
 }
 

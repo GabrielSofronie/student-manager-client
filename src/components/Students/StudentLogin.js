@@ -23,15 +23,15 @@ class StudentLogin extends Component {
         super(props);
 
         this.initialState = {
-            institution : "",
-            registrationNumber : "",
-            username : "",
-            password : "",
-            directory : [],
-            snackbar : {
-                open : false,
-                variant : "success",
-                message : "Succes"
+            institution: "",
+            registrationNumber: "",
+            email: "",
+            password: "",
+            directory: [],
+            snackbar: {
+                open: false,
+                variant: "success",
+                message: "Succes"
             }
         };
 
@@ -43,11 +43,11 @@ class StudentLogin extends Component {
     componentWillMount() {
         studentService.getInstitutions(INSTITUTIONS_URL)
             .then(response => response.json())
-            .then(directory => {
-                if (Array.isArray(directory))
-                    this.setState({directory});
+            .then(response => {
+                if (response.hasOwnProperty('institutions') && Array.isArray(response.institutions))
+                    this.setState({ directory: response.institutions });
             });
-        
+
         this.setAuth();
     }
 
@@ -55,57 +55,56 @@ class StudentLogin extends Component {
         if (reason === 'clickaway') {
             return;
         }
-  
+
         // Reset Snackbar
         this.setState({
-            snackbar : {
-                open : false,
-                variant : this.state.snackbar.variant,
-                message : this.state.snackbar.message,
+            snackbar: {
+                open: false,
+                variant: this.state.snackbar.variant,
+                message: this.state.snackbar.message,
             }
         });
-      }
+    }
 
     setAuth() {
         const ticket = JSON.parse(localStorage.getItem('ticket'));
         if (ticket && ticket.hasOwnProperty('id'))
-          this.setState({authenticated : true});
+            this.setState({ authenticated: true });
         else {
-          const { directory } = this.state;
-          this.setState(this.initialState);
-          this.setState({directory});
+            const { directory } = this.state;
+            this.setState(this.initialState);
+            this.setState({ directory });
         }
-      }
+    }
 
     handleChange = event => {
         const { name, value } = event.target
-      
+
         this.setState({
-          [name]: value,
+            [name]: value,
         })
     }
 
     handleSubmit(event) {
         event.preventDefault();
 
-        const userRegistration = `${this.state.institution}_${this.state.registrationNumber}`;
-
-        authService.login(`${STUDENTS_URL}/${userRegistration}`, {
-            username: this.state.username,
-            password: this.state.password
-          })
-          .then(() => {
-            this.setAuth();
-          })
-          .catch(() => {
-            this.setState({
-              snackbar : {
-                  open : true,
-                  variant : "error",
-                  message : I18n.AuthFails
-              }
+        authService.login(`${STUDENTS_URL}`, {
+            email: this.state.email,
+            password: this.state.password,
+            registrationNumber: `${this.state.institution}_${this.state.registrationNumber}`
+        })
+            .then(() => {
+                this.setAuth();
+            })
+            .catch(() => {
+                this.setState({
+                    snackbar: {
+                        open: true,
+                        variant: "error",
+                        message: I18n.AuthFails
+                    }
+                });
             });
-          });
 
         //this.setState(this.initialState);
     }
@@ -122,8 +121,8 @@ class StudentLogin extends Component {
                 <Paper>
                     <Box px={2} py={1} bgcolor="grey.100">
                         <Typography
-                        variant="h5"
-                        component="h3">
+                            variant="h5"
+                            component="h3">
                             {I18nStudents.TitleLogin}
                         </Typography>
                     </Box>
@@ -144,64 +143,64 @@ class StudentLogin extends Component {
                                             return (
                                                 <MenuItem key={index} value={row.code}>{row.name}</MenuItem>
                                             )
-                                    })}
+                                        })}
 
                                 </Select>
                             </FormControl>
                         </Box>
                         <Box mx={2} my={2}>
                             <TextField
-                            id="filled-registrationNumber-input"
-                            required
-                            label={I18nStudents.FieldRegistrationNo}
-                            type="text"
-                            name="registrationNumber"
-                            autoComplete="registrationNumber"
-                            margin="dense"
-                            variant="outlined"
-                            fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.registrationNumber}
+                                id="filled-registrationNumber-input"
+                                required
+                                label={I18nStudents.FieldRegistrationNo}
+                                type="text"
+                                name="registrationNumber"
+                                autoComplete="registrationNumber"
+                                margin="dense"
+                                variant="outlined"
+                                fullWidth
+                                onChange={this.handleChange}
+                                value={this.state.registrationNumber}
                             />
                         </Box>
                         <Box mx={2} my={2}>
                             <TextField
-                            id="filled-email-input"
-                            required
-                            label={I18n.FieldEmail}
-                            type="email"
-                            name="username"
-                            autoComplete="email"
-                            margin="dense"
-                            variant="outlined"
-                            fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.username}
+                                id="filled-email-input"
+                                required
+                                label={I18n.FieldEmail}
+                                type="email"
+                                name="email"
+                                autoComplete="email"
+                                margin="dense"
+                                variant="outlined"
+                                fullWidth
+                                onChange={this.handleChange}
+                                value={this.state.email}
                             />
                         </Box>
-                            
+
                         <Box mx={2} my={2}>
                             <TextField
-                            id="filled-password-input"
-                            required
-                            label={I18n.FieldPass}
-                            type="password"
-                            name="password"
-                            autoComplete="current-password"
-                            margin="dense"
-                            variant="outlined"
-                            fullWidth
-                            onChange={this.handleChange}
-                            value={this.state.password}
+                                id="filled-password-input"
+                                required
+                                label={I18n.FieldPass}
+                                type="password"
+                                name="password"
+                                autoComplete="current-password"
+                                margin="dense"
+                                variant="outlined"
+                                fullWidth
+                                onChange={this.handleChange}
+                                value={this.state.password}
                             />
                         </Box>
 
                         <Box mx={2} pb={4}>
                             <Button
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                            onClick={this.handleSubmit}>
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                onClick={this.handleSubmit}>
                                 {I18n.FieldLogin}
                             </Button>
                         </Box>
