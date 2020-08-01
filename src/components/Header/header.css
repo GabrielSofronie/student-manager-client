@@ -1,0 +1,7 @@
+header {
+    height: 80px;
+    background-image: url('sigla_ctp.svg');
+    background-repeat: no-repeat;
+    background-color: #00a550;
+    background-position-y: center;
+}

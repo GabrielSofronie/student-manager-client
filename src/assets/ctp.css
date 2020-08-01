@@ -1,0 +1,16 @@
+.switch-page {
+    margin: 20px 0;
+    cursor: pointer;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.logout button {
+    background-color: #00a550;
+    border: 1px solid #00a550;
+}
+
+button.delete {
+    background-color: red;
+    border: 1px solid red;
+}
